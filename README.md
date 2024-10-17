@@ -1,113 +1,40 @@
-# KamusKu 📚
+This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-**KamusKu** is a digital Indonesian language dictionary web application that allows users to explore the richness of the Indonesian language quickly, accurately, and effortlessly. The application provides traditional dictionary definitions as well as AI-powered explanations to give users deeper insights into word usage, etymology, synonyms, antonyms, and example sentences.
+## Getting Started
 
-## Features
+First, run the development server:
 
-- **Fast Search**: Quickly find word definitions in seconds.
-- **Comprehensive Dictionary**: Access thousands of Indonesian words and terms easily.
-- **AI Exploration**: Dive deeper into words with AI-powered insights using OpenAI's GPT-3.5-turbo model.
-- **Offline Access**: Use the dictionary anytime, anywhere, even without an internet connection.
-- **Responsive Design**: Optimized for both desktop and mobile devices.
-- **Assistance**: Interactive FAQ to help users with common questions.
-- **PWA Support**: Install KamusKu as a Progressive Web App on your device.
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
 
-## Tech Stack
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-- **Frontend**:
-  - [Next.js](https://nextjs.org/) - React framework with server-side rendering and static site generation.
-  - [TypeScript](https://www.typescriptlang.org/) - Strongly typed programming language that builds on JavaScript.
-  - [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework for rapid UI development.
-  - [Framer Motion](https://www.framer.com/motion/) - Library for creating animations and transitions.
-  - [Radix UI](https://www.radix-ui.com/) - Unstyled, accessible UI primitives for building high-quality design systems and web apps.
-  - [Lucide Icons](https://lucide.dev/) - Beautiful and consistent icon toolkit.
+You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
 
-- **Backend**:
-  - [Next.js API Routes](https://nextjs.org/docs/api-routes/introduction) - Serverless functions for backend API endpoints.
+[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
 
-- **APIs**:
-  - [Wiktionary API](https://www.mediawiki.org/wiki/API:Main_page) - For fetching traditional dictionary definitions.
-  - [OpenAI GPT-3.5 API](https://openai.com/) - For AI-powered word explanations.
+The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
 
-## Installation
+This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
-Follow the steps below to set up and run KamusKu locally on your machine.
+## Learn More
 
-### Prerequisites
+To learn more about Next.js, take a look at the following resources:
 
-- **Node.js** (version 14.x or later)
-- **npm** (version 6.x or later) or **Yarn** (version 1.x or later)
-- **Git** (for cloning the repository)
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
 
-## Usage
+## Deploy on Vercel
 
-### Searching Words
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-1. **Navigate to the Dictionary Page**: Click on **Buka Kamus** from the navigation menu or go directly to `/kamus`.
-2. **Choose Mode**:
-   - **Kamus Tradisional**: Fetch definitions from the traditional dictionary.
-   - **Eksplorasi AI**: Get AI-generated insights using GPT-3.5.
-3. **Search for a Word**:
-   - Enter the word you want to search in the input field.
-   - Click on the **Cari** button or press **Enter**.
-4. **View Results**:
-   - The definition or AI explanation will appear below the search bar.
-   - If the word is not found, an appropriate error message will be displayed.
-
-### Installing as a PWA
-
-- When prompted, click on the **Install** button to add KamusKu to your device.
-- Alternatively, use your browser's installation option (usually found in the address bar or settings).
-- Once installed, you can access KamusKu directly from your home screen or applications menu, even offline.
-
-## Contributing
-
-We welcome contributions from the community! Here's how you can help:
-
-1. **Fork the Repository**: Click on the **Fork** button at the top right corner of the repository page.
-2. **Clone Your Fork**:
-
-   ```bash
-   git clone https://github.com/your-username/kamusku.git
-   cd kamusku
-   ```
-
-3. **Create a New Branch**:
-
-   ```bash
-   git checkout -b feature/your-feature-name
-   ```
-
-4. **Make Your Changes**: Implement your feature or fix.
-5. **Commit Your Changes**:
-
-   ```bash
-   git commit -m "Add your commit message here"
-   ```
-
-6. **Push to Your Fork**:
-
-   ```bash
-   git push origin feature/your-feature-name
-   ```
-
-7. **Create a Pull Request**: Go to the original repository and click on **New Pull Request**.
-
-## License
-
-This project is licensed under the [MIT License](LICENSE), which means you can use, modify, and distribute it as you wish.
-
-## Contact Us
-
-If you have any questions, suggestions, or need assistance, feel free to reach out:
-
-- **Email**: [support@kamusku.com](mailto:support@kamusku.com)
-- **Twitter**: [@kamusku_app](https://twitter.com/kamusku_app)
-- **Facebook**: [KamusKu Official](https://facebook.com/kamuskuofficial)
-
----
-
-*Explore the richness of the Indonesian language with KamusKu.*
-
----
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
