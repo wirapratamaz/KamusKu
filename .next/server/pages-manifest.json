@@ -2,7 +2,6 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/kamus": "pages/kamus.js",
   "/": "pages/index.js",
-  "/api/dictionary": "pages/api/dictionary.js"
+  "/kamus": "pages/kamus.js"
 }
