@@ -1,115 +1,145 @@
-import Image from "next/image";
-import localFont from "next/font/local";
+'use client'
 
-const geistSans = localFont({
-    src: "./fonts/GeistVF.woff",
-    variable: "--font-geist-sans",
-    weight: "100 900",
-});
-const geistMono = localFont({
-    src: "./fonts/GeistMonoVF.woff",
-    variable: "--font-geist-mono",
-    weight: "100 900",
-});
+import Link from 'next/link'
+import { Button } from "@/components/ui/button"
+import { motion, useScroll, useTransform } from "framer-motion"
+import { Search, Book, Zap, Menu } from "lucide-react"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import Footer from '@/components/Footer'
+import WaveBackground from '@/components/WaveBackground'
 
-export default function Home() {
-    return (
-        <div
-            className={`${geistSans.variable} ${geistMono.variable} grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]`}
+export default function Index() {
+  const { scrollYProgress } = useScroll()
+  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0])
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-background to-blue-100 relative">
+      <WaveBackground />
+      <motion.div className="relative z-10" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
+        <header className="p-4 md:p-6 flex justify-between items-center bg-white bg-opacity-90 backdrop-blur-sm shadow-sm sticky top-0">
+          <Link href="/" className="text-3xl font-bold text-primary flex items-center">
+            <motion.div whileHover={{ rotate: 360 }} transition={{ duration: 0.5 }}>
+              <Book className="mr-2 h-8 w-8" />
+            </motion.div>
+            KamusKu
+          </Link>
+          <nav className="hidden md:flex space-x-4">
+            <NavLink href="/kamus">Buka Kamus</NavLink>
+            <NavLink href="#tentang-kami">Tentang Kami</NavLink>
+            <NavLink href="#kontak">Kontak</NavLink>
+          </nav>
+          <div className="md:hidden">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <Menu className="h-6 w-6" />
+                  <span className="sr-only">Open menu</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem asChild>
+                  <Link href="/kamus">Buka Kamus</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="#tentang-kami">Tentang Kami</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="#kontak">Kontak</Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </header>
+        <main className="container mx-auto px-4 py-16 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <motion.h1 
+              className="text-4xl md:text-5xl font-extrabold tracking-tight lg:text-6xl mb-6"
+              style={{ opacity }}
+            >
+              Kamus Bahasa Indonesia Digital
+            </motion.h1>
+            <motion.p 
+              className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto"
+              style={{ opacity }}
+            >
+              Jelajahi kekayaan Bahasa Indonesia dengan kamus digital yang cepat, akurat, dan mudah digunakan.
+            </motion.p>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Button asChild size="lg" className="animate-pulse">
+                <Link href="/kamus">
+                  Mulai Mencari
+                </Link>
+              </Button>
+            </motion.div>
+          </motion.div>
+          <motion.div 
+            className="mt-20 grid md:grid-cols-3 gap-8"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
+          >
+            <FeatureCard
+              icon={<Search className="h-8 w-8 text-blue-500" />}
+              title="Pencarian Cepat"
+              description="Temukan definisi kata dengan cepat dan akurat dalam hitungan detik."
+            />
+            <FeatureCard
+              icon={<Book className="h-8 w-8 text-green-500" />}
+              title="Kamus Lengkap"
+              description="Akses ribuan kata dan istilah dalam Bahasa Indonesia dengan mudah."
+            />
+            <FeatureCard
+              icon={<Zap className="h-8 w-8 text-yellow-500" />}
+              title="Akses Offline"
+              description="Gunakan kamus kapan saja, di mana saja, bahkan tanpa koneksi internet."
+            />
+          </motion.div>
+        </main>
+        <Footer />
+      </motion.div>
+    </div>
+  )
+}
+
+function NavLink({ href, children }: { href: string; children: React.ReactNode }) {
+  return (
+    <Link href={href} className="text-gray-600 hover:text-primary transition-colors">
+      {children}
+    </Link>
+  )
+}
+
+function FeatureCard({ icon, title, description }: { icon: React.ReactNode, title: string, description: string }) {
+  return (
+    <motion.div 
+      className="bg-white bg-opacity-80 backdrop-blur-sm text-card-foreground rounded-lg p-6 shadow-lg hover:shadow-xl transition-shadow duration-300"
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+    >
+      <motion.div
+        className="flex justify-center items-center h-20 w-20 rounded-full bg-primary bg-opacity-10 mx-auto mb-4"
+        whileHover={{ rotate: 360 }}
+        transition={{ duration: 0.5 }}
+      >
+        <motion.div
+          initial={{ scale: 1 }}
+          animate={{ scale: [1, 1.2, 1] }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
         >
-            <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-                <Image
-                    className="dark:invert"
-                    src="https://nextjs.org/icons/next.svg"
-                    alt="Next.js logo"
-                    width={180}
-                    height={38}
-                    priority
-                />
-                <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-                    <li className="mb-2">
-                        Get started by editing{" "}
-                        <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-                            src/pages/index.tsx
-                        </code>
-                        .
-                    </li>
-                    <li>Save and see your changes instantly.</li>
-                </ol>
-
-                <div className="flex gap-4 items-center flex-col sm:flex-row">
-                    <a
-                        className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-                        href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        <Image
-                            className="dark:invert"
-                            src="https://nextjs.org/icons/vercel.svg"
-                            alt="Vercel logomark"
-                            width={20}
-                            height={20}
-                        />
-                        Deploy now
-                    </a>
-                    <a
-                        className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-                        href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        Read our docs
-                    </a>
-                </div>
-            </main>
-            <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-                <a
-                    className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-                    href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    <Image
-                        aria-hidden
-                        src="https://nextjs.org/icons/file.svg"
-                        alt="File icon"
-                        width={16}
-                        height={16}
-                    />
-                    Learn
-                </a>
-                <a
-                    className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-                    href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    <Image
-                        aria-hidden
-                        src="https://nextjs.org/icons/window.svg"
-                        alt="Window icon"
-                        width={16}
-                        height={16}
-                    />
-                    Examples
-                </a>
-                <a
-                    className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-                    href="https://nextjs.org?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    <Image
-                        aria-hidden
-                        src="https://nextjs.org/icons/globe.svg"
-                        alt="Globe icon"
-                        width={16}
-                        height={16}
-                    />
-                    Go to nextjs.org →
-                </a>
-            </footer>
-        </div>
-    );
+          {icon}
+        </motion.div>
+      </motion.div>
+      <h3 className="font-semibold text-xl mb-2">{title}</h3>
+      <p className="text-muted-foreground">{description}</p>
+    </motion.div>
+  )
 }
