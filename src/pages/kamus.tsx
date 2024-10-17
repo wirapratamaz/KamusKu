@@ -1,17 +1,17 @@
 'use client'
 
-import { useState } from 'react';
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { motion, AnimatePresence } from "framer-motion";
-import { Search, ArrowLeft, Book, Sparkles, Loader2 } from "lucide-react";
-import Link from 'next/link';
+import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Search, ArrowLeft, Book, Sparkles, Loader2 } from 'lucide-react'
+import Link from 'next/link'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
-const MotionCard = motion(Card);
-const MotionInput = motion(Input);
-const MotionButton = motion(Button);
+const MotionCard = motion(Card)
+const MotionInput = motion(Input)
+const MotionButton = motion(Button)
 
 const BackgroundAnimation = () => (
   <div className="absolute inset-0 overflow-hidden z-0">
@@ -21,7 +21,7 @@ const BackgroundAnimation = () => (
         cy="50%"
         r="30%"
         fill="none"
-        stroke="rgba(59, 130, 246, 0.3)"
+        stroke="rgba(80, 130, 246, 0.6)"
         strokeWidth="2"
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{
@@ -36,55 +36,54 @@ const BackgroundAnimation = () => (
       />
     </svg>
   </div>
-);
+)
 
 export default function KamusPage() {
-  const [word, setWord] = useState('');
-  const [result, setResult] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [mode, setMode] = useState<'dictionary' | 'gpt'>('dictionary');
+  const [word, setWord] = useState('')
+  const [result, setResult] = useState<string[]>([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [mode, setMode] = useState<'dictionary' | 'gpt'>('dictionary')
 
   const handleSearch = async (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
     if (!word.trim()) {
-      alert('Silakan masukkan kata yang ingin dicari.');
-      return;
+      alert('Silakan masukkan kata yang ingin dicari.')
+      return
     }
 
-    setIsLoading(true);
-    setResult([]);
+    setIsLoading(true)
+    setResult([])
 
     try {
       if (mode === 'dictionary') {
-        await searchDictionary();
+        await searchDictionary()
       } else {
-        await searchGPT();
+        await searchGPT()
       }
     } catch (error) {
-      console.error('Search error:', error);
-      setResult(['Terjadi kesalahan saat mencari definisi.']);
+      console.error('Search error:', error)
+      setResult(['Terjadi kesalahan saat mencari definisi.'])
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   const searchDictionary = async () => {
     try {
-      const response = await fetch(`/api/dictionary?word=${encodeURIComponent(word)}`);
-      const data = await response.json();
+      const response = await fetch(`/api/dictionary?word=${encodeURIComponent(word)}`)
+      const data = await response.json()
 
       if (response.ok) {
-        // Split the definition string by semicolon followed by space to create an array of definitions
-        const definitions = data.definition.split('; ').map((def: string) => def.trim());
-        setResult(definitions);
+        const definitions = data.definition.split('; ').map((def: string) => def.trim())
+        setResult(definitions)
       } else {
-        setResult([data.error || 'Kata tidak ditemukan.']);
+        setResult([data.error || 'Kata tidak ditemukan.'])
       }
     } catch (error) {
-      console.error('Dictionary API error:', error);
-      setResult(['Terjadi kesalahan saat mengambil data kamus.']);
+      console.error('Dictionary API error:', error)
+      setResult(['Terjadi kesalahan saat mengambil data kamus.'])
     }
-  };
+  }
 
   const searchGPT = async () => {
     try {
@@ -94,21 +93,20 @@ export default function KamusPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ word }),
-      });
+      })
 
-      const data = await response.json();
+      const data = await response.json()
 
       if (response.ok) {
-        setResult([data.response]);
+        setResult([data.response])
       } else {
-        setResult([data.error || 'Terjadi kesalahan saat memproses permintaan AI.']);
+        setResult([data.error || 'Terjadi kesalahan saat memproses permintaan AI.'])
       }
     } catch (error) {
-      console.error('GPT API error:', error);
-      setResult(['Terjadi kesalahan saat memproses permintaan AI.']);
+      console.error('GPT API error:', error)
+      setResult(['Terjadi kesalahan saat memproses permintaan AI.'])
     }
-  };
-
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-secondary p-4 sm:p-8 relative">
@@ -136,7 +134,10 @@ export default function KamusPage() {
           <Tabs
             defaultValue="dictionary"
             className="mb-6"
-            onValueChange={(value: string) => setMode(value as 'dictionary' | 'gpt')}
+            onValueChange={(value) => {
+              setMode(value as 'dictionary' | 'gpt')
+              setResult([])
+            }}
           >
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="dictionary" className="flex items-center justify-center">
@@ -219,7 +220,7 @@ export default function KamusPage() {
             </div>
           </form>
           <AnimatePresence>
-            {result && (
+            {result.length > 0 && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -235,19 +236,29 @@ export default function KamusPage() {
                 >
                   {word}
                 </motion.h2>
-                <motion.div
-                  className="text-muted-foreground whitespace-pre-line"
+                <motion.ol
+                  className="list-decimal list-inside space-y-2"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.4, duration: 0.3 }}
                 >
-                  {result}
-                </motion.div>
+                  {result.map((definition, index) => (
+                    <motion.li
+                      key={index}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.1 * index, duration: 0.3 }}
+                      className="text-muted-foreground"
+                    >
+                      {definition}
+                    </motion.li>
+                  ))}
+                </motion.ol>
               </motion.div>
             )}
           </AnimatePresence>
         </CardContent>
       </MotionCard>
     </div>
-  );
+  )
 }
