@@ -43,11 +43,17 @@ export default function KamusPage() {
   const [result, setResult] = useState<string[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [mode, setMode] = useState<'dictionary' | 'gpt'>('dictionary')
+  const [isMaintenanceModalOpen, setIsMaintenanceModalOpen] = useState(false)
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!word.trim()) {
       alert('Silakan masukkan kata yang ingin dicari.')
+      return
+    }
+
+    if (mode === 'gpt') {
+      setIsMaintenanceModalOpen(true)
       return
     }
 
@@ -57,8 +63,6 @@ export default function KamusPage() {
     try {
       if (mode === 'dictionary') {
         await searchDictionary()
-      } else {
-        await searchGPT()
       }
     } catch (error) {
       console.error('Search error:', error)
@@ -85,42 +89,21 @@ export default function KamusPage() {
     }
   }
 
-  const searchGPT = async () => {
-    try {
-      const response = await fetch('/api/gpt', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ word }),
-      })
-
-      const data = await response.json()
-
-      if (response.ok) {
-        setResult([data.response])
-      } else {
-        setResult([data.error || 'Terjadi kesalahan saat memproses permintaan AI.'])
-      }
-    } catch (error) {
-      console.error('GPT API error:', error)
-      setResult(['Terjadi kesalahan saat memproses permintaan AI.'])
-    }
-  }
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-secondary p-4 sm:p-8 relative">
       <BackgroundAnimation />
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <Link href="/" className="inline-flex items-center text-primary hover:underline mb-6">
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Kembali ke Beranda
-        </Link>
-      </motion.div>
+      <div className="flex justify-between items-center mb-6">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <Link href="/" className="inline-flex items-center text-primary hover:underline">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Kembali ke Beranda
+          </Link>
+        </motion.div>
+      </div>
       <MotionCard
         className="max-w-3xl mx-auto z-10"
         initial={{ opacity: 0, scale: 0.9 }}
@@ -259,6 +242,32 @@ export default function KamusPage() {
           </AnimatePresence>
         </CardContent>
       </MotionCard>
+
+      {/* Maintenance Modal */}
+      <AnimatePresence>
+        {isMaintenanceModalOpen && (
+          <motion.div
+            className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="bg-white rounded-lg p-6 max-w-sm w-full text-center"
+              initial={{ scale: 0.8 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.8 }}
+              transition={{ duration: 0.3 }}
+            >
+              <h2 className="text-xl font-semibold mb-4">Maintenance</h2>
+              <p className="mb-6">
+                Maaf, layanan Eksplorasi AI sedang dalam pemeliharaan. Silakan coba lagi nanti.
+              </p>
+              <Button onClick={() => setIsMaintenanceModalOpen(false)}>Tutup</Button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
