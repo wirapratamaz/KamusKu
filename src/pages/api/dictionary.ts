@@ -5,6 +5,19 @@ interface DictionaryResponse {
   definition: string;
 }
 
+interface KBBDictionaryData {
+  lema: string;
+  arti: { deskripsi: string }[];
+  tesaurusLink: string;
+}
+
+interface KBBIAPIResponse {
+  success: boolean;
+  status: number;
+  message: string;
+  data: KBBDictionaryData[];
+}
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<DictionaryResponse | { error: string }>
@@ -20,27 +33,29 @@ export default async function handler(
   }
 
   try {
-    // Fetch definition from Wiktionary API
+    // Fetch definition from KBBI API
     const response = await fetch(
-      `https://id.wiktionary.org/w/api.php?action=query&titles=${encodeURIComponent(
-        word
-      )}&prop=extracts&exintro&explaintext&format=json&origin=*`
+      `https://x-labs.my.id/api/kbbi/search/${word}`
     );
 
-    const data = await response.json();
-
-    const pages = data.query.pages;
-    const page = pages[Object.keys(pages)[0]];
-
-    if (page.missing) {
-      return res.status(404).json({ error: "Word not found" });
+    if (!response.ok) {
+      console.error(`KBBI API responded with status ${response.status}`);
+      return res.status(502).json({ error: "Failed to fetch data from KBBI API" });
     }
 
-    const definition = page.extract || "Definisi tidak tersedia.";
+    const data: KBBIAPIResponse = await response.json();
 
-    return res.status(200).json({ word, definition });
+    if (!data.success || !data.data || data.data.length === 0) {
+      return res.status(404).json({ error: "Word not found in KBBI" });
+    }
+
+    // Assuming the first entry is the most relevant
+    const entry = data.data[0];
+    const definition = entry.arti.map((art) => art.deskripsi).join(" ");
+
+    return res.status(200).json({ word: entry.lema, definition });
   } catch (error) {
-    console.error("Error fetching dictionary data:", error);
+    console.error("Error fetching dictionary data from KBBI API:", error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 }
