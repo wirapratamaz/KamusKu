@@ -18,6 +18,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import { getAllBookmarks, addBookmark, removeBookmark } from '@/lib/indexedDB'
 
 const MotionCard = motion(Card)
 const MotionInput = motion(Input)
@@ -35,11 +36,13 @@ export default function KamusPage() {
   const [isBookmarkDialogOpen, setIsBookmarkDialogOpen] = useState(false)
 
   useEffect(() => {
-    // Load bookmarks from localStorage
-    const savedBookmarks = localStorage.getItem('bookmarks')
-    if (savedBookmarks) {
-      setBookmarks(JSON.parse(savedBookmarks))
+    // Load bookmarks from IndexedDB
+    const loadBookmarks = async () => {
+      const savedBookmarks = await getAllBookmarks()
+      setBookmarks(savedBookmarks)
     }
+
+    loadBookmarks()
 
     // Fetch word of the day
     fetchWordOfTheDay()
@@ -97,18 +100,23 @@ export default function KamusPage() {
     }
   }
 
-  const toggleBookmark = (wordToBookmark: string) => {
-    const newBookmarks = bookmarks.includes(wordToBookmark)
-      ? bookmarks.filter(b => b !== wordToBookmark)
-      : [...bookmarks, wordToBookmark]
-    setBookmarks(newBookmarks)
-    localStorage.setItem('bookmarks', JSON.stringify(newBookmarks))
-    setShowToast(true)
-    setTimeout(() => setShowToast(false), 3000)
+  const toggleBookmark = async (wordToBookmark: string) => {
+    if (bookmarks.includes(wordToBookmark)) {
+      await removeBookmark(wordToBookmark)
+      setBookmarks(bookmarks.filter(b => b !== wordToBookmark))
+      setShowToast(true)
+      setTimeout(() => setShowToast(false), 3000)
+    } else {
+      await addBookmark(wordToBookmark)
+      setBookmarks([...bookmarks, wordToBookmark])
+      setShowToast(true)
+      setTimeout(() => setShowToast(false), 3000)
+    }
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-secondary p-4 sm:p-8 relative">
+      {/* Background Animation with pointer-events disabled */}
       <div className="pointer-events-none z-0">
         <BackgroundAnimationComponent />
       </div>
@@ -263,9 +271,7 @@ export default function KamusPage() {
                 whileTap={{ scale: 0.95 }}
               >
                 {isLoading ? (
-                  <motion.div
-                    className="flex items-center justify-center"
-                  >
+                  <motion.div className="flex items-center justify-center">
                     <Loader2 className="h-4 w-4 animate-spin mr-2" />
                     <span>Loading...</span>
                   </motion.div>

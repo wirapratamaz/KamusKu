@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect } from 'react'
 import Image from 'next/image'
 import { Card, CardContent } from "@/components/ui/card"
 import {
@@ -9,6 +10,8 @@ import {
     CarouselNext,
     CarouselPrevious,
 } from "@/components/ui/carousel"
+import useEmblaCarousel from 'embla-carousel-react'
+import { useMediaQuery } from '../hooks/use-media-query'
 
 const testimonials = [
     {
@@ -38,35 +41,50 @@ const testimonials = [
 ]
 
 export default function Testimonial() {
+    const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true })
+    const isMobile = useMediaQuery("(max-width: 640px)")
+
+    useEffect(() => {
+        if (emblaApi) {
+            emblaApi.reInit()
+        }
+    }, [emblaApi, isMobile])
+
     return (
-        <section className="py-16 mb-6">
+        <section className="py-16 mb-6 overflow-hidden">
             <div className="container mx-auto px-4">
                 <h2 className="text-3xl font-bold text-center mb-2">Testimoni</h2>
                 <p className="text-center text-gray-600 mb-8">Apa kata pengguna kami tentang KamusKu</p>
-                <Carousel className="max-w-4xl mx-auto">
-                    <CarouselContent>
-                        {testimonials.map((testimonial, index) => (
-                            <CarouselItem key={index}>
-                                <Card>
-                                    <CardContent className="flex flex-col items-center p-6">
-                                        <Image
-                                            src={testimonial.image}
-                                            alt={testimonial.name}
-                                            width={100}
-                                            height={100}
-                                            className="rounded-full mb-4"
-                                        />
-                                        <h3 className="font-semibold text-lg">{testimonial.name}</h3>
-                                        <p className="text-gray-500 mb-4">{testimonial.username}</p>
-                                        <p className="text-center italic">&ldquo;{testimonial.quote}&rdquo;</p>
-                                    </CardContent>
-                                </Card>
-                            </CarouselItem>
-                        ))}
-                    </CarouselContent>
-                    <CarouselPrevious />
-                    <CarouselNext />
-                </Carousel>
+                <div className="relative max-w-4xl mx-auto">
+                    <Carousel ref={emblaRef} className="w-full">
+                        <CarouselContent>
+                            {testimonials.map((testimonial, index) => (
+                                <CarouselItem key={index} className="pl-4 md:basis-1/2 lg:basis-1/3">
+                                    <Card className="h-full">
+                                        <CardContent className="flex flex-col items-center p-6 h-full">
+                                            <Image
+                                                src={testimonial.image}
+                                                alt={testimonial.name}
+                                                width={100}
+                                                height={100}
+                                                className="rounded-full mb-4 object-cover"
+                                            />
+                                            <h3 className="font-semibold text-lg">{testimonial.name}</h3>
+                                            <p className="text-gray-500 mb-4">{testimonial.username}</p>
+                                            <p className="text-center italic flex-grow">&ldquo;{testimonial.quote}&rdquo;</p>
+                                        </CardContent>
+                                    </Card>
+                                </CarouselItem>
+                            ))}
+                        </CarouselContent>
+                        {!isMobile && (
+                            <>
+                                <CarouselPrevious className="left-0 -translate-x-1/2" />
+                                <CarouselNext className="right-0 translate-x-1/2" />
+                            </>
+                        )}
+                    </Carousel>
+                </div>
             </div>
         </section>
     )
