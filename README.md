@@ -1,8 +1,44 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# KamusKu
 
-## Getting Started
+KamusKu is a digital Indonesian dictionary app built with Next.js. It allows users to explore the richness of the Indonesian language with features that are fast, accurate, and easy to use.
 
-First, run the development server:
+## Features
+
+- **Quick Search**: Find word definitions quickly and accurately in seconds.
+- **Comprehensive Dictionary**: Easily access thousands of words and terms in Indonesian.
+- **Offline Access**: Use the dictionary anytime, anywhere, even without an internet connection.
+- **Word of the Day**: Get a new word every day to expand your vocabulary.
+- **Bookmark**: Save your favorite words for easy reference.
+- **AI Exploration (Coming Soon)**: Dive deeper into words with AI assistance for broader insights.
+
+## Requirements
+
+- Node.js 14.x or higher
+- npm, yarn, or pnpm
+- Docker (to run the app in a container)
+
+## Installation
+
+1. **Clone this repository:**
+
+   ```bash
+   git clone https://github.com/wirapratamaz/KamusKu.git
+   cd kamusku
+   ```
+
+2. **Install dependencies:**
+
+   ```bash
+   npm install
+   # or
+   yarn install
+   # or
+   pnpm install
+   ```
+
+## Running the Development Server
+
+Run the following command to start the development server:
 
 ```bash
 npm run dev
@@ -10,31 +46,78 @@ npm run dev
 yarn dev
 # or
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser to see the result.
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+## Building for Production
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+To build the app in production mode:
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+```bash
+npm run build
+# or
+yarn build
+# or
+pnpm build
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+After the build process is complete, you can start the production server:
 
-## Learn More
+```bash
+npm run start
+# or
+yarn start
+# or
+pnpm start
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Using Docker
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+To run the app using Docker, make sure Docker is installed on your system. Then, run the following commands to build and run the container:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+```bash
+docker build -t kamusku .
+docker run -p 3000:3000 kamusku
+```
 
-## Deploy on Vercel
+## Project Structure
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **/pages**: Contains the app's pages.
+- **/components**: Contains reusable React components.
+- **/lib**: Contains utility functions and libraries.
+- **/public**: Contains static files like images and icons.
+- **/styles**: Contains global styling files.
+- **/src/types/dictionary.ts**: Defines data types for the dictionary API response.
+  - `DictionaryResponse`: Data structure for word and definition response.
+  - `KBBDictionaryData`: Data structure for KBBI dictionary entries.
+  - `KBBIAPIResponse`: Data structure for KBBI API response.
+  - Code reference:
+    ```typescript:src/types/dictionary.ts
+    startLine: 1
+    endLine: 15
+    ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## Dataset
+
+The dataset used in this app is a collection of basic Indonesian words stored in the `kata-dasar.original.txt` file. This dataset is used to provide a complete and accurate dictionary.
+
+## Contribution
+
+Contributions are welcome! Please open an issue or submit a pull request for improvements and new features.
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
+
+## Contact
+
+For further questions, please contact us at [support@kamusku.com](mailto:support@kamusku.com).
+
+---
+
+_Thank you for using KamusKu! Explore and preserve the Indonesian language with us._
+
+```
+
+```
