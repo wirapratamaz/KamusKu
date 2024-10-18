@@ -7,6 +7,7 @@ const nextConfig = {
       "asset-a.grid.id",
       "encrypted-tbn0.gstatic.com",
       "akcdn.detik.net.id",
+      "img.freepik.com",
     ],
   },
 };

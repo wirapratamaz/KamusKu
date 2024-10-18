@@ -15,15 +15,15 @@ import { useMediaQuery } from '../hooks/use-media-query'
 
 const testimonials = [
     {
-        name: "Vonny Felicia",
-        username: "@vonnyfelicia",
-        image: "https://asset-a.grid.id/crop/0x0:0x0/700x465/photo/2024/02/03/snapinstaapp_373744852_66493041-20240203020304.jpg",
-        quote: "KamusKu sangat membantu saya dalam menulis tugas kuliah. Terima kasih KamusKu!"
+        name: "Elon Musk",
+        username: "@elonmusk",
+        image: "https://img.freepik.com/premium-photo/elon-musk-picture-ceo-spacex-tesla-twitter_485374-869.jpg",
+        quote: "KamusKu membantu saya dalam memahami Bahasa Indonesia yang sangat kaya. Terima kasih!"
     },
     {
-        name: "Joko Widodo",
-        username: "@jokowi",
-        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtD_-6ZzIeFdlM2_xhFYVZy5icOfmBjN44OA&s",
+        name: "Sam Altman",
+        username: "@sama",
+        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT4p--dWKgnATREZ4qX8m4FOmEP5yMvTqX7fA&s",
         quote: "Aplikasi yang luar biasa untuk meningkatkan kosakata Bahasa Indonesia. Sangat direkomendasikan!"
     },
     {
@@ -65,8 +65,8 @@ export default function Testimonial() {
                                             <Image
                                                 src={testimonial.image}
                                                 alt={testimonial.name}
-                                                width={100}
-                                                height={100}
+                                                width={150}
+                                                height={150}
                                                 className="rounded-full mb-4 object-cover"
                                             />
                                             <h3 className="font-semibold text-lg">{testimonial.name}</h3>

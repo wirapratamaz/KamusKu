@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { useState, useEffect } from 'react'
+// import SpeedInsights from '@vercel/speed-insights';
 import Link from 'next/link'
 import { Button } from "@/components/ui/button"
 import { motion, useScroll, useTransform } from "framer-motion"
