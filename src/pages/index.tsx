@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Button } from "@/components/ui/button"
 import { motion, useScroll, useTransform } from "framer-motion"
@@ -12,16 +13,29 @@ import {
 } from "@/components/ui/dropdown-menu"
 import Footer from '@/components/Footer'
 import WaveBackground from '@/components/WaveBackground'
+import { BackgroundAnimationComponent } from '@/components/background-animation'
+import Testimonial from '@/components/Testimonial'
 
 export default function Index() {
   const { scrollYProgress } = useScroll()
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0])
+  const [isScrolled, setIsScrolled] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10)
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-blue-100 relative">
+      <BackgroundAnimationComponent />
       <WaveBackground />
       <motion.div className="relative z-10" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
-        <header className="p-4 md:p-6 flex justify-between items-center bg-white bg-opacity-90 backdrop-blur-sm shadow-sm sticky top-0">
+        <header className={`p-4 md:p-6 flex justify-between items-center bg-white transition-all duration-300 fixed top-0 left-0 right-0 z-50 ${isScrolled ? 'bg-opacity-90 backdrop-blur-sm shadow-md' : 'bg-opacity-0'}`}>
           <Link href="/" className="text-3xl font-bold text-primary flex items-center">
             <motion.div whileHover={{ rotate: 360 }} transition={{ duration: 0.5 }}>
               <Book className="mr-2 h-8 w-8" />
@@ -55,19 +69,19 @@ export default function Index() {
             </DropdownMenu>
           </div>
         </header>
-        <main className="container mx-auto px-4 py-16 text-center">
+        <main className="container mx-auto px-4 py-16 text-center mt-20">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <motion.h1 
+            <motion.h1
               className="text-4xl md:text-5xl font-extrabold tracking-tight lg:text-6xl mb-6"
               style={{ opacity }}
             >
               Kamus Bahasa Indonesia Digital
             </motion.h1>
-            <motion.p 
+            <motion.p
               className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto"
               style={{ opacity }}
             >
@@ -81,7 +95,7 @@ export default function Index() {
               </Button>
             </motion.div>
           </motion.div>
-          <motion.div 
+          <motion.div
             className="mt-20 grid md:grid-cols-3 gap-8"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -104,6 +118,7 @@ export default function Index() {
             />
           </motion.div>
         </main>
+        <Testimonial />
         <Footer />
       </motion.div>
     </div>
@@ -120,7 +135,7 @@ function NavLink({ href, children }: { href: string; children: React.ReactNode }
 
 function FeatureCard({ icon, title, description }: { icon: React.ReactNode, title: string, description: string }) {
   return (
-    <motion.div 
+    <motion.div
       className="bg-white bg-opacity-80 backdrop-blur-sm text-card-foreground rounded-lg p-6 shadow-lg hover:shadow-xl transition-shadow duration-300"
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}

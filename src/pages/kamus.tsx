@@ -1,14 +1,15 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Search, ArrowLeft, Book, Sparkles, Loader2 } from 'lucide-react'
+import { Search, ArrowLeft, Book, Sparkles, Loader2, Bookmark, Star } from 'lucide-react'
 import Link from 'next/link'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { BackgroundAnimationComponent } from '@/components/background-animation'
+import { Toast } from '@/components/ui/toast'
 
 const MotionCard = motion(Card)
 const MotionInput = motion(Input)
@@ -20,6 +21,28 @@ export default function KamusPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [mode, setMode] = useState<'dictionary' | 'gpt'>('dictionary')
   const [isMaintenanceModalOpen, setIsMaintenanceModalOpen] = useState(false)
+  const [bookmarks, setBookmarks] = useState<string[]>([])
+  const [wordOfTheDay, setWordOfTheDay] = useState({ word: '', definition: '' })
+  const [showToast, setShowToast] = useState(false)
+
+  useEffect(() => {
+    // Load bookmarks from localStorage
+    const savedBookmarks = localStorage.getItem('bookmarks')
+    if (savedBookmarks) {
+      setBookmarks(JSON.parse(savedBookmarks))
+    }
+
+    // Fetch word of the day
+    fetchWordOfTheDay()
+  }, [])
+
+  const fetchWordOfTheDay = async () => {
+    // This would be replaced with an actual API call
+    setWordOfTheDay({
+      word: 'Semangat',
+      definition: 'Kekuatan (kegembiraan, gairah) batin; perasaan hati; nafsu (kemauan, gairah) untuk bekerja, berjuang, dsb.'
+    })
+  }
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -65,6 +88,16 @@ export default function KamusPage() {
     }
   }
 
+  const toggleBookmark = () => {
+    const newBookmarks = bookmarks.includes(word)
+      ? bookmarks.filter(b => b !== word)
+      : [...bookmarks, word]
+    setBookmarks(newBookmarks)
+    localStorage.setItem('bookmarks', JSON.stringify(newBookmarks))
+    setShowToast(true)
+    setTimeout(() => setShowToast(false), 3000)
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-secondary p-4 sm:p-8 relative">
       <BackgroundAnimationComponent />
@@ -90,6 +123,14 @@ export default function KamusPage() {
           <CardTitle className="text-3xl font-bold text-center">Jelajahi Kata</CardTitle>
         </CardHeader>
         <CardContent>
+          <div className="mb-6 p-4 bg-primary-foreground rounded-lg">
+            <h3 className="text-lg font-semibold mb-2 flex items-center">
+              <Star className="mr-2 h-5 w-5 text-yellow-500" />
+              Kata Hari Ini
+            </h3>
+            <p className="font-medium">{wordOfTheDay.word}</p>
+            <p className="text-sm text-muted-foreground">{wordOfTheDay.definition}</p>
+          </div>
           <Tabs
             defaultValue="dictionary"
             className="mb-6"
@@ -187,14 +228,24 @@ export default function KamusPage() {
                 transition={{ duration: 0.3 }}
                 className="mt-6 bg-white bg-opacity-80 p-4 rounded shadow"
               >
-                <motion.h2
-                  className="text-2xl font-semibold mb-2 capitalize"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.2, duration: 0.3 }}
-                >
-                  {word}
-                </motion.h2>
+                <div className="flex justify-between items-center mb-2">
+                  <motion.h2
+                    className="text-2xl font-semibold capitalize"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.2, duration: 0.3 }}
+                  >
+                    {word}
+                  </motion.h2>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={toggleBookmark}
+                    aria-label={bookmarks.includes(word) ? "Hapus dari bookmark" : "Tambahkan ke bookmark"}
+                  >
+                    <Bookmark className={`h-5 w-5 ${bookmarks.includes(word) ? 'fill-current' : ''}`} />
+                  </Button>
+                </div>
                 <motion.ol
                   className="list-decimal list-inside space-y-2"
                   initial={{ opacity: 0 }}
@@ -213,6 +264,10 @@ export default function KamusPage() {
                     </motion.li>
                   ))}
                 </motion.ol>
+                  <div className="mt-4">
+                    <div className="flex flex-wrap gap-2">
+                    </div>
+                  </div>
               </motion.div>
             )}
           </AnimatePresence>
@@ -242,6 +297,17 @@ export default function KamusPage() {
               <Button onClick={() => setIsMaintenanceModalOpen(false)}>Tutup</Button>
             </motion.div>
           </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Toast Notification */}
+      <AnimatePresence>
+        {showToast && (
+          <Toast
+            title={bookmarks.includes(word) ? "Ditambahkan ke bookmark" : "Dihapus dari bookmark"}
+          >
+            Kata &quot;{word}&quot; telah {bookmarks.includes(word) ? 'ditambahkan ke' : 'dihapus dari'} bookmark Anda.
+          </Toast>
         )}
       </AnimatePresence>
     </div>
