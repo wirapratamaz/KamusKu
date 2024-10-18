@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Search, ArrowLeft, Book, Sparkles, Loader2, Bookmark, Star, X } from 'lucide-react'
+import { Search, ArrowLeft, Book, Sparkles, Loader2, Bookmark, Star, X, AlertCircle } from 'lucide-react'
 import Link from 'next/link'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -18,6 +18,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { getAllBookmarks, addBookmark, removeBookmark } from '@/lib/indexedDB'
 
 const MotionCard = motion(Card)
@@ -34,22 +35,19 @@ export default function KamusPage() {
   const [wordOfTheDay, setWordOfTheDay] = useState({ word: '', definition: '' })
   const [showToast, setShowToast] = useState(false)
   const [isBookmarkDialogOpen, setIsBookmarkDialogOpen] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    // Load bookmarks from IndexedDB
     const loadBookmarks = async () => {
       const savedBookmarks = await getAllBookmarks()
       setBookmarks(savedBookmarks)
     }
 
     loadBookmarks()
-
-    // Fetch word of the day
     fetchWordOfTheDay()
   }, [])
 
   const fetchWordOfTheDay = async () => {
-    // This would be replaced with an actual API call
     setWordOfTheDay({
       word: 'Semangat',
       definition: 'Kekuatan (kegembiraan, gairah) batin; perasaan hati; nafsu (kemauan, gairah) untuk bekerja, berjuang, dsb.'
@@ -58,8 +56,16 @@ export default function KamusPage() {
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!word.trim()) {
-      alert('Silakan masukkan kata yang ingin dicari.')
+    setError(null)
+    const trimmedWord = word.trim()
+
+    if (!trimmedWord) {
+      setError('Silakan masukkan kata yang ingin dicari.')
+      return
+    }
+
+    if (trimmedWord.includes(' ')) {
+      setError('Mohon masukkan hanya satu kata. Untuk mencari frasa atau kalimat, gunakan fitur Eksplorasi AI.')
       return
     }
 
@@ -73,30 +79,33 @@ export default function KamusPage() {
 
     try {
       if (mode === 'dictionary') {
-        await searchDictionary()
+        await searchDictionary(trimmedWord)
       }
     } catch (error) {
       console.error('Search error:', error)
-      setResult(['Terjadi kesalahan saat mencari definisi.'])
+      setError('Terjadi kesalahan saat mencari definisi. Silakan coba lagi nanti.')
     } finally {
       setIsLoading(false)
     }
   }
 
-  const searchDictionary = async () => {
+  const searchDictionary = async (searchWord: string) => {
     try {
-      const response = await fetch(`/api/dictionary?word=${encodeURIComponent(word)}`)
+      const response = await fetch(`/api/dictionary?word=${encodeURIComponent(searchWord)}`)
       const data = await response.json()
 
       if (response.ok) {
         const definitions = data.definition.split('; ').map((def: string) => def.trim())
         setResult(definitions)
+        if (definitions.length === 0) {
+          setError(`Maaf, kata "${searchWord}" tidak ditemukan dalam kamus kami. Pastikan ejaan sudah benar atau coba kata lain.`)
+        }
       } else {
-        setResult([data.error || 'Kata tidak ditemukan.'])
+        setError(data.error || `Maaf, kata "${searchWord}" tidak ditemukan dalam kamus kami. Pastikan ejaan sudah benar atau coba kata lain.`)
       }
     } catch (error) {
       console.error('Dictionary API error:', error)
-      setResult(['Terjadi kesalahan saat mengambil data kamus.'])
+      setError('Terjadi kesalahan saat mengambil data kamus. Silakan coba lagi nanti.')
     }
   }
 
@@ -104,24 +113,20 @@ export default function KamusPage() {
     if (bookmarks.includes(wordToBookmark)) {
       await removeBookmark(wordToBookmark)
       setBookmarks(bookmarks.filter(b => b !== wordToBookmark))
-      setShowToast(true)
-      setTimeout(() => setShowToast(false), 3000)
     } else {
       await addBookmark(wordToBookmark)
       setBookmarks([...bookmarks, wordToBookmark])
-      setShowToast(true)
-      setTimeout(() => setShowToast(false), 3000)
     }
+    setShowToast(true)
+    setTimeout(() => setShowToast(false), 3000)
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-secondary p-4 sm:p-8 relative">
-      {/* Background Animation with pointer-events disabled */}
       <div className="pointer-events-none z-0">
         <BackgroundAnimationComponent />
       </div>
 
-      {/* Top Bar with Higher z-index */}
       <div className="flex justify-between items-center mb-6 z-20 relative">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -204,6 +209,7 @@ export default function KamusPage() {
             onValueChange={(value) => {
               setMode(value as 'dictionary' | 'gpt')
               setResult([])
+              setError(null)
             }}
           >
             <TabsList className="grid w-full grid-cols-2">
@@ -285,6 +291,21 @@ export default function KamusPage() {
             </div>
           </form>
           <AnimatePresence>
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+                className="mt-4"
+              >
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertTitle>Error</AlertTitle>
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              </motion.div>
+            )}
             {result.length > 0 && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}

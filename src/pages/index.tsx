@@ -1,5 +1,6 @@
 'use client'
 
+import React from 'react'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Button } from "@/components/ui/button"
@@ -20,6 +21,7 @@ export default function Index() {
   const { scrollYProgress } = useScroll()
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0])
   const [isScrolled, setIsScrolled] = useState(false)
+  const aboutRef = React.useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -118,6 +120,14 @@ export default function Index() {
             />
           </motion.div>
         </main>
+        <section ref={aboutRef} className="py-16 bg-white">
+          <div className="container mx-auto px-4">
+            <h2 className="text-3xl font-bold text-center mb-8">Tentang Kami</h2>
+            <p className="text-lg text-center max-w-3xl mx-auto">
+              KamusKu adalah platform kamus digital Bahasa Indonesia yang didedikasikan untuk melestarikan dan mempromosikan kekayaan bahasa nasional kita. Dengan teknologi canggih dan database yang komprehensif, kami berkomitmen untuk menyediakan definisi yang akurat, contoh penggunaan yang relevan, dan fitur-fitur inovatif untuk membantu pengguna dalam menjelajahi keindahan Bahasa Indonesia.
+            </p>
+          </div>
+        </section>
         <Testimonial />
         <Footer />
       </motion.div>
