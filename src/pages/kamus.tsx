@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/dialog"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { getAllBookmarks, addBookmark, removeBookmark } from '@/lib/indexedDB'
+import type { DictionaryResponse } from '@/types/dictionary'
 
 const MotionCard = motion(Card)
 const MotionInput = motion(Input)
@@ -33,6 +34,7 @@ export default function KamusPage() {
   const [isMaintenanceModalOpen, setIsMaintenanceModalOpen] = useState(false)
   const [bookmarks, setBookmarks] = useState<string[]>([])
   const [wordOfTheDay, setWordOfTheDay] = useState({ word: '', definition: '' })
+  const [loadingWordOfDay, setLoadingWordOfDay] = useState<boolean>(false);
   const [showToast, setShowToast] = useState(false)
   const [isBookmarkDialogOpen, setIsBookmarkDialogOpen] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -48,11 +50,29 @@ export default function KamusPage() {
   }, [])
 
   const fetchWordOfTheDay = async () => {
-    setWordOfTheDay({
-      word: 'Semangat',
-      definition: 'Kekuatan (kegembiraan, gairah) batin; perasaan hati; nafsu (kemauan, gairah) untuk bekerja, berjuang, dsb.'
-    })
-  }
+    setLoadingWordOfDay(true);
+    try {
+      const response = await fetch(`/api/dictionary?word=gembira`);
+      if (!response.ok) {
+        console.error(`Failed to fetch Word of the Day: ${response.statusText}`);
+        return;
+      }
+      const data: DictionaryResponse = await response.json();
+      
+      // Limit the definition to 20 words
+      const limitedDefinition = data.definition.split(' ').slice(0, 20).join(' ') + (data.definition.split(' ').length > 20 ? '...' : '');
+  
+      setWordOfTheDay({
+        word: data.word,
+        definition: limitedDefinition,
+      });
+    } catch (error) {
+      console.error("Error fetching Word of the Day:", error);
+    } finally {
+      setLoadingWordOfDay(false);
+    }
+  };
+  
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -200,8 +220,14 @@ export default function KamusPage() {
               <Star className="mr-2 h-5 w-5 text-yellow-500" />
               Kata Hari Ini
             </h3>
-            <p className="font-medium">{wordOfTheDay.word}</p>
-            <p className="text-sm text-muted-foreground">{wordOfTheDay.definition}</p>
+            {loadingWordOfDay ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <>
+                <p className="font-medium">{wordOfTheDay.word}</p>
+                <p className="text-sm text-muted-foreground">{wordOfTheDay.definition}</p>
+              </>
+            )}
           </div>
           <Tabs
             defaultValue="dictionary"

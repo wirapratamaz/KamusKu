@@ -1,22 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-
-interface DictionaryResponse {
-  word: string;
-  definition: string;
-}
-
-interface KBBDictionaryData {
-  lema: string;
-  arti: { deskripsi: string }[];
-  tesaurusLink: string;
-}
-
-interface KBBIAPIResponse {
-  success: boolean;
-  status: number;
-  message: string;
-  data: KBBDictionaryData[];
-}
+import { DictionaryResponse, KBBIAPIResponse } from '@/types/dictionary';
 
 export default async function handler(
   req: NextApiRequest,
