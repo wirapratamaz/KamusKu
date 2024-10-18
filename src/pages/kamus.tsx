@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Search, ArrowLeft, Book, Sparkles, Loader2, Bookmark, Star } from 'lucide-react'
+import { Search, ArrowLeft, Book, Sparkles, Loader2, Bookmark, Star, X } from 'lucide-react'
 import Link from 'next/link'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -10,6 +10,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { BackgroundAnimationComponent } from '@/components/background-animation'
 import { Toast } from '@/components/ui/toast'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 
 const MotionCard = motion(Card)
 const MotionInput = motion(Input)
@@ -24,6 +32,7 @@ export default function KamusPage() {
   const [bookmarks, setBookmarks] = useState<string[]>([])
   const [wordOfTheDay, setWordOfTheDay] = useState({ word: '', definition: '' })
   const [showToast, setShowToast] = useState(false)
+  const [isBookmarkDialogOpen, setIsBookmarkDialogOpen] = useState(false)
 
   useEffect(() => {
     // Load bookmarks from localStorage
@@ -88,10 +97,10 @@ export default function KamusPage() {
     }
   }
 
-  const toggleBookmark = () => {
-    const newBookmarks = bookmarks.includes(word)
-      ? bookmarks.filter(b => b !== word)
-      : [...bookmarks, word]
+  const toggleBookmark = (wordToBookmark: string) => {
+    const newBookmarks = bookmarks.includes(wordToBookmark)
+      ? bookmarks.filter(b => b !== wordToBookmark)
+      : [...bookmarks, wordToBookmark]
     setBookmarks(newBookmarks)
     localStorage.setItem('bookmarks', JSON.stringify(newBookmarks))
     setShowToast(true)
@@ -100,8 +109,12 @@ export default function KamusPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-secondary p-4 sm:p-8 relative">
-      <BackgroundAnimationComponent />
-      <div className="flex justify-between items-center mb-6">
+      <div className="pointer-events-none z-0">
+        <BackgroundAnimationComponent />
+      </div>
+
+      {/* Top Bar with Higher z-index */}
+      <div className="flex justify-between items-center mb-6 z-20 relative">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -112,7 +125,53 @@ export default function KamusPage() {
             Kembali ke Beranda
           </Link>
         </motion.div>
+        <Dialog open={isBookmarkDialogOpen} onOpenChange={setIsBookmarkDialogOpen}>
+          <DialogTrigger asChild>
+            <Button variant="outline" size="icon" aria-label="Bookmark">
+              <Bookmark className="h-4 w-4" />
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Bookmark Kata</DialogTitle>
+              <DialogDescription>
+                Daftar kata yang telah Anda simpan.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="py-4">
+              {bookmarks.length === 0 ? (
+                <p className="text-center text-muted-foreground">Belum ada kata yang di-bookmark.</p>
+              ) : (
+                <ul className="space-y-2">
+                  {bookmarks.map((bookmarkedWord, index) => (
+                    <li key={index} className="flex justify-between items-center">
+                      <Button
+                        variant="link"
+                        onClick={() => {
+                          setWord(bookmarkedWord)
+                          setIsBookmarkDialogOpen(false)
+                          handleSearch(new Event('submit') as unknown as React.FormEvent)
+                        }}
+                      >
+                        {bookmarkedWord}
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => toggleBookmark(bookmarkedWord)}
+                        aria-label="Hapus Bookmark"
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
+
       <MotionCard
         className="max-w-3xl mx-auto z-10"
         initial={{ opacity: 0, scale: 0.9 }}
@@ -240,7 +299,7 @@ export default function KamusPage() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={toggleBookmark}
+                    onClick={() => toggleBookmark(word)}
                     aria-label={bookmarks.includes(word) ? "Hapus dari bookmark" : "Tambahkan ke bookmark"}
                   >
                     <Bookmark className={`h-5 w-5 ${bookmarks.includes(word) ? 'fill-current' : ''}`} />
@@ -264,10 +323,6 @@ export default function KamusPage() {
                     </motion.li>
                   ))}
                 </motion.ol>
-                  <div className="mt-4">
-                    <div className="flex flex-wrap gap-2">
-                    </div>
-                  </div>
               </motion.div>
             )}
           </AnimatePresence>

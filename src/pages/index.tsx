@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import Footer from '@/components/Footer'
-import WaveBackground from '@/components/WaveBackground'
+// import WaveBackground from '@/components/WaveBackground'
 import { BackgroundAnimationComponent } from '@/components/background-animation'
 import Testimonial from '@/components/Testimonial'
 
@@ -33,7 +33,7 @@ export default function Index() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-blue-100 relative">
       <BackgroundAnimationComponent />
-      <WaveBackground />
+      {/* <WaveBackground /> */}
       <motion.div className="relative z-10" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
         <header className={`p-4 md:p-6 flex justify-between items-center bg-white transition-all duration-300 fixed top-0 left-0 right-0 z-50 ${isScrolled ? 'bg-opacity-90 backdrop-blur-sm shadow-md' : 'bg-opacity-0'}`}>
           <Link href="/" className="text-3xl font-bold text-primary flex items-center">

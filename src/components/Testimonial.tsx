@@ -39,7 +39,7 @@ const testimonials = [
 
 export default function Testimonial() {
     return (
-        <section className="py-16 bg-gray-50">
+        <section className="py-16 mb-6">
             <div className="container mx-auto px-4">
                 <h2 className="text-3xl font-bold text-center mb-2">Testimoni</h2>
                 <p className="text-center text-gray-600 mb-8">Apa kata pengguna kami tentang KamusKu</p>
