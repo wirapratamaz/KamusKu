@@ -8,35 +8,11 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { BackgroundAnimationComponent } from '@/components/background-animation'
 
 const MotionCard = motion(Card)
 const MotionInput = motion(Input)
 const MotionButton = motion(Button)
-
-const BackgroundAnimation = () => (
-  <div className="absolute inset-0 overflow-hidden z-0">
-    <svg className="absolute w-full h-full" xmlns="http://www.w3.org/2000/svg">
-      <motion.circle
-        cx="50%"
-        cy="50%"
-        r="30%"
-        fill="none"
-        stroke="rgba(80, 130, 246, 0.6)"
-        strokeWidth="2"
-        initial={{ scale: 0.8, opacity: 0 }}
-        animate={{
-          scale: [0.8, 1.2, 0.8],
-          opacity: [0, 0.5, 0],
-        }}
-        transition={{
-          duration: Infinity,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-      />
-    </svg>
-  </div>
-)
 
 export default function KamusPage() {
   const [word, setWord] = useState('')
@@ -91,7 +67,7 @@ export default function KamusPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-secondary p-4 sm:p-8 relative">
-      <BackgroundAnimation />
+      <BackgroundAnimationComponent />
       <div className="flex justify-between items-center mb-6">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
